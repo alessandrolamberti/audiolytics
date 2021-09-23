@@ -1,16 +1,8 @@
 import pyaudio
 import argparse
 import os
-import wave
-import librosa
-import numpy as np
-from sys import byteorder
-from array import array
-from struct import pack
-
 from model.model_utils import create_model
 from data.preprocess import Feature_Extractor
-
 from utils import *
 
 def get_arguments():
