@@ -3,8 +3,30 @@ import numpy as np
 import os 
 import tqdm 
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, LSTM, Dropout
 
 label_to_int = {"male": 1, "female": 0}
+
+def create_model(vector_length=128):
+    model = Sequential()
+    model.add(Dense(256, input_shape=(vector_length,)))
+    model.add(Dropout(0.3))
+    model.add(Dense(256, activation="relu"))
+    model.add(Dropout(0.3))
+    model.add(Dense(128, activation="relu"))
+    model.add(Dropout(0.3))
+    model.add(Dense(128, activation="relu"))
+    model.add(Dropout(0.3))
+    model.add(Dense(64, activation="relu"))
+    model.add(Dropout(0.3))
+    model.add(Dense(64, activation="relu"))
+    model.add(Dropout(0.3))
+    model.add(Dense(32, activation="relu"))
+    model.add(Dense(1, activation="sigmoid"))
+    model.compile(loss="binary_crossentropy", metrics=["accuracy"], optimizer="adam")
+    #model.summary()
+    return model
 
 def load_data(vector_length = 128):
     if not os.path.isdir("../results"):
@@ -13,7 +35,7 @@ def load_data(vector_length = 128):
         X = np.load("../results/features.npy")
         y = np.load("../results/labels.npy")
         return X, y
-    df = pd.read_csv("../data/balanced-all.csv")
+    df = pd.read_csv("./data/balanced-all.csv")
     n_samples = len(df)
     n_male_samples = len(df[df['gender'] == 'male'])
     n_female_samples = len(df[df['gender'] == 'female'])
@@ -23,7 +45,7 @@ def load_data(vector_length = 128):
     X = np.zeros((n_samples, vector_length))
     y = np.zeros((n_samples, 1))
     for i, (filename, gender) in tqdm.tqdm(enumerate(zip(df['filename'], df['gender'])), "Loading data", total=n_samples):
-        features = np.load(f"../{filename}")
+        features = np.load(f"./{filename}")
         X[i] = features
         y[i] = label_to_int[gender]
     np.save("../results/features", X)

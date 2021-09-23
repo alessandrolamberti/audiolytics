@@ -1,0 +1,9 @@
+# Model cfg
+model_weights: model/weights/model.h5
+
+# Audio cfg
+THRESHOLD: 500
+CHUNK_SIZE: 1024
+RATE: 16000
+SILENCE: 30
+output: tests/test.wav
