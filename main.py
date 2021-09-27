@@ -1,7 +1,7 @@
-import pyaudio
+#import pyaudio
 import argparse
 import os
-from model.model_utils import create_model
+from model.gender.model_utils import create_model, process_prediction
 from data.preprocess import Feature_Extractor
 from utils import *
 
@@ -16,7 +16,6 @@ def get_arguments():
     return parser.parse_args()
 
 if __name__ == '__main__':
-
     args = get_arguments()
     audio_file = args.audio_file
     cfg = load_cfg(args.cfg)
@@ -29,8 +28,7 @@ if __name__ == '__main__':
         record_to_file(cfg['output'])
 
     features = Feature_Extractor(audio_file, mel=True).extract().reshape(1, -1)
-    male_prob = model.predict(features)[0][0]
-    female_prob = 1 - male_prob
-    gender = "male" if male_prob > female_prob else "female"
-    print("Result:", gender)
-    print(f"Probabilities:  Male: {male_prob*100:.2f}%    Female: {female_prob*100:.2f}%")
+    male_prob = model.predict(features)
+    gender, confidence = process_prediction(male_prob)
+
+    print(f"Predicted: {gender}, with confidence: {confidence:.2f}")

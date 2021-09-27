@@ -64,3 +64,11 @@ def split(X, y, test_size=0.1, val_size=0.1):
         "y_valid": y_valid,
         "y_test": y_test
     }
+
+def process_prediction(prediction):
+    int_to_label = {0: 'male', 1: 'female'}
+
+    prob_array = np.array([prediction, 1 - prediction])[:, 0, 0]
+    gender = int_to_label[np.argmax(prob_array)]
+    confidence = max(prob_array)
+    return gender, confidence

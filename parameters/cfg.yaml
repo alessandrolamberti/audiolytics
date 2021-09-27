@@ -1,5 +1,5 @@
 # Model cfg
-model_weights: model/weights/model.h5
+model_weights: model/gender/weights/model.h5
 
 # Audio cfg
 THRESHOLD: 500
