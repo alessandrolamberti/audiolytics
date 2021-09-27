@@ -30,5 +30,7 @@ if __name__ == '__main__':
     features = Feature_Extractor(audio_file, mel=True).extract().reshape(1, -1)
     male_prob = model.predict(features)
     gender, confidence = process_prediction(male_prob)
+    text = speech_to_text(audio_file)
 
     print(f"Predicted: {gender}, with confidence: {confidence:.2f}")
+    print(f"Detected text: {text}")

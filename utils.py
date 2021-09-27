@@ -5,6 +5,7 @@ from struct import pack
 import pyaudio
 import wave
 import yaml
+import speech_recognition as sr
 
 def load_cfg(cfg_path):
     cfg = yaml.load(open(cfg_path, 'r'),
@@ -121,5 +122,11 @@ def record_to_file(path):
     wf.writeframes(data)
     wf.close()
 
+def speech_to_text(wav):
+    r = sr.Recognizer()
+    with sr.AudioFile(wav) as source:
+        audio_data = r.record(source)
+        text = r.recognize_google(audio_data)
+    return text
 
     
