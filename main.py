@@ -2,9 +2,9 @@ import argparse
 import os
 
 from utils.preprocess import Feature_Extractor
-from utils.utils import create_model, process_prediction, speech_to_text
+from utils.utils import process_prediction, speech_to_text
 
-from config.get_cfg import GENDER_MODEL_PATH, model
+from config.get_cfg import model
 
 def get_arguments():
     parser = argparse.ArgumentParser()
