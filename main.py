@@ -1,8 +1,10 @@
 import argparse
 import os
-from model.gender.model_utils import create_model, process_prediction
-from data.preprocess import Feature_Extractor
-from utils import *
+
+from utils.preprocess import Feature_Extractor
+from utils.utils import create_model, process_prediction, speech_to_text
+
+from config.get_cfg import GENDER_MODEL_PATH
 
 def get_arguments():
     parser = argparse.ArgumentParser()
@@ -10,17 +12,14 @@ def get_arguments():
     parser.add_argument('--audio_file', type=str,
                         help='Audio file to be used')
     
-    parser.add_argument('--cfg', type=str,
-                        default='parameters/cfg.yaml')
     return parser.parse_args()
 
 if __name__ == '__main__':
     args = get_arguments()
     audio_file = args.audio_file
-    cfg = load_cfg(args.cfg)
 
     model = create_model()
-    model.load_weights(cfg['model_weights'])
+    model.load_weights(GENDER_MODEL_PATH)
 
     features = Feature_Extractor(audio_file, mel=True).extract().reshape(1, -1)
     male_prob = model.predict(features)
