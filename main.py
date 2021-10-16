@@ -1,4 +1,3 @@
-#import pyaudio
 import argparse
 import os
 from model.gender.model_utils import create_model, process_prediction
@@ -22,10 +21,6 @@ if __name__ == '__main__':
 
     model = create_model()
     model.load_weights(cfg['model_weights'])
-
-    if not audio_file or not os.path.isfile(audio_file):
-        print("Please talk")
-        record_to_file(cfg['output'])
 
     features = Feature_Extractor(audio_file, mel=True).extract().reshape(1, -1)
     male_prob = model.predict(features)
