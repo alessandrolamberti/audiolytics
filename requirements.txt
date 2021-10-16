@@ -1,9 +1,9 @@
-numpy==1.13.3
-librosa==0.8.1
-pandas==1.1.5
-tensorflow==2.6.0
-tqdm==4.62.3
-PyAudio==0.2.11
+numpy==1.19.5
 SpeechRecognition==3.8.1
-PyYAML==5.4.1
+tensorflow==2.6.0
+librosa==0.8.1
+tqdm==4.60.0
+pandas==1.2.4
+uvicorn==0.15.0
+fastapi==0.70.0
 scikit_learn==1.0
