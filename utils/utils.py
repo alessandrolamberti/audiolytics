@@ -13,8 +13,7 @@ def process_prediction(prediction):
 
 def digest_features(features):
     start = time.time()
-    features.reshape(1, -1)
-    gender, confidence = process_prediction(model.predict(features))
+    gender, confidence = process_prediction(model.predict(features.reshape(1, -1)))
     end = time.time()
     logger.info("Feature digestion and prediction time: {}".format(end-start))
 
