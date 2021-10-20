@@ -1,4 +1,6 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Request
+from fastapi.templating import Jinja2Templates
+from starlette.responses import HTMLResponse
 import uvicorn
 import os
 
@@ -8,6 +10,12 @@ from utils.utils import digest_features, speech_to_text
 from config.get_cfg import model, SHOW_ALL, logger
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
 
 
 @app.post("/upload/")
