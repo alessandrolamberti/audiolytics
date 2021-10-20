@@ -29,14 +29,12 @@ async def upload_file(file: UploadFile = File(...)):
     with open(file.filename, "wb") as f:
         f.write(file.file.read())
     
-    response['filename'] = file.filename
-
     features = Feature_Extractor(file.filename, mel=True).extract()
     gender, confidence = digest_features(features)
     response['audio prediction'] = {'gender': gender, 'confidence': confidence}
 
-    text, text_confidence = speech_to_text(file.filename, show_all=SHOW_ALL)
-    response['text prediction'] = {'transcript': text, 'confidence': text_confidence}
+    text, less_probable_text, text_confidence = speech_to_text(file.filename, show_all=SHOW_ALL)
+    response['text prediction'] = {'transcript': text, 'confidence': text_confidence, 'less_probable_transcripts': less_probable_text}
 
     response['success'] = True
 

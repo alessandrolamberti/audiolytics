@@ -19,28 +19,46 @@ def digest_features(features):
 
     return gender, confidence
 
+def digest_audio_prediction(prediction, show_all):
+    text = []
+    confidence = []
+    less_probable_text = []
 
-def speech_to_text(wav, show_all=False):
+    if len(prediction) == 0:
+        return "Unintelligible text", [], 0
+
+    if not show_all:
+        return text.append(prediction)
+    prediction = prediction['alternative']
+    text.append(prediction[0]['transcript'])
+    confidence.append(prediction[0]['confidence'])
+    for i in range(1,len(prediction)):
+        less_probable_text.append(prediction[i]['transcript'])
+        if 'confidence' in prediction[i]:
+            confidence.append(prediction[i]['confidence'])
+    
+    return text, less_probable_text, confidence
+
+
+def speech_to_text(wav, show_all=True):
     r = sr.Recognizer()
-    text = ''
-    confidence = None
 
     with sr.AudioFile(wav) as source:
         audio_data = r.record(source)
-        start = time.time()
         try:
-            if not show_all:
-                text = r.recognize_google(audio_data, show_all=show_all)
-            else:
-                prediction = r.recognize_google(audio_data, show_all=show_all)['alternative']
-                text = prediction[0]['transcript']
-                confidence = prediction[0]['confidence']
+            start = time.time()
+            prediction = r.recognize_google(audio_data, show_all=show_all)
+            end = time.time()
+            logger.info("Speech to text time: {}".format(end-start))
+
         except sr.UnknownValueError:
-            text = "Unintelligible text."
-        end = time.time()
-    logger.info("Time taken to recognize speech: {}".format(end - start))
+            logger.info("Google Speech Recognition could not understand audio")
+            return "Unintelligible text", [], 0
 
+        except sr.RequestError as e:
+            logger.info("Could not request results from Google Speech Recognition service; {}".format(e))
+            return "Unintelligible text", [], 0
 
-    return text, confidence
+    return digest_audio_prediction(prediction, show_all)
 
     
