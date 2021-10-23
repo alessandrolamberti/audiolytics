@@ -33,7 +33,8 @@ def create_model(vector_length=128):
 
 # Speech recognition
 SHOW_ALL = True # returns the most likely transcription if false, JSON complete response otherwise
-BAD_RESPONSE = ("Unintelligible text", [], 0)
+BAD_RESPONSE = ("Unintelligible text", None, [])
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 gender_classifier = create_model()
 gender_classifier.load_weights(GENDER_MODEL_PATH)

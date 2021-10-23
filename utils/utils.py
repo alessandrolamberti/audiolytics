@@ -2,6 +2,7 @@ import speech_recognition as sr
 import numpy as np
 import time
 from config.get_cfg import logger, gender_classifier, BAD_RESPONSE
+from transformers import pipeline
 
 def process_prediction(prediction):
     int_to_label = {0: 'male', 1: 'female'}
@@ -18,6 +19,16 @@ def digest_features(features):
     logger.info("Feature digestion and gender prediction time: {}".format(end-start))
 
     return gender, confidence
+
+def text_sentiment(text):
+    if text == "Unintelligible text":
+        return None
+    start = time.time()
+    sentiment = pipeline('sentiment-analysis')(text)[0]
+    end = time.time()
+    logger.info("Text sentiment prediction time: {}".format(end-start))
+
+    return sentiment
 
 def digest_audio_prediction(prediction, show_all):
     text = []
@@ -39,7 +50,6 @@ def digest_audio_prediction(prediction, show_all):
     
     return text, less_probable_text, confidence
 
-
 def speech_to_text(wav, show_all=True):
     r = sr.Recognizer()
 
@@ -60,5 +70,4 @@ def speech_to_text(wav, show_all=True):
             return BAD_RESPONSE
 
     return digest_audio_prediction(prediction, show_all)
-
     

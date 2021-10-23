@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Request
 import os
 from utils.preprocess import Feature_Extractor
-from utils.utils import digest_features, speech_to_text
+from utils.utils import digest_features, speech_to_text, text_sentiment
 
 from config.get_cfg import gender_classifier, SHOW_ALL, logger
 
@@ -25,7 +25,10 @@ async def upload_file(file: UploadFile = File(...)):
     response['audio analysis'] = {'gender': gender, 'confidence': confidence}
 
     text, less_probable_text, text_confidence = speech_to_text(file.filename, show_all=SHOW_ALL)
-    response['text prediction'] = {'transcript': text, 'confidence': text_confidence, 'less_probable_transcripts': less_probable_text}
+    response['text analysis'] = {'transcript': text, 'confidence': text_confidence, 'less_probable_transcripts': less_probable_text}
+
+    sentiment = text_sentiment(text)
+    response['text analysis'].update({'sentiment': sentiment})
 
     response['success'] = True
 
