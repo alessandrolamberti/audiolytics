@@ -33,7 +33,7 @@ def create_model(vector_length=128):
 
 # Speech recognition
 SHOW_ALL = True # returns the most likely transcription if false, JSON complete response otherwise
-BAD_RESPONSE = ("Unintelligible text", None, [])
+BAD_RESPONSE = ("Unintelligible text", None, None)
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 gender_classifier = create_model()
