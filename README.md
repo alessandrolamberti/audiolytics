@@ -8,11 +8,11 @@ FastAPI based endpoint which loads a .wav file as input and returns a response.
 ```
 {
   "success": true,
-  "audio prediction": {
+  "audio analysis": {
     "gender": "male",
     "confidence": 0.9590235948562622
   },
-  "text prediction": {
+  "text analysis": {
     "transcript": [
       "no that's not gonna do it"
     ],
@@ -20,14 +20,14 @@ FastAPI based endpoint which loads a .wav file as input and returns a response.
       0.92713708
     ],
     "less_probable_transcripts": [
-      "no that's not going to do it",
-      "no that's not gonna do",
-      "no that's not going to do",
-      "now that's not gonna do it"
-    ]
+      "no that's not going to do it"
+    ],
+    "sentiment": {
+      "label": "NEGATIVE",
+      "score": 0.9987033605575562
+    }
   }
-}
-```
+}```
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
@@ -43,9 +43,6 @@ Install instructions
 ```
 
 
-
-
-
     
 ## Run Locally
 
@@ -56,10 +53,6 @@ uvicorn app:app
 
   
 ## Roadmap
-
-- Add text sentiment analysis
-
-- Customize API request
 
 - Improve temporary file storage (mySql?)
 
