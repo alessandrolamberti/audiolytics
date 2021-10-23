@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import numpy as np
 import time
-from config.get_cfg import logger, model
+from config.get_cfg import logger, gender_classifier, BAD_RESPONSE
 
 def process_prediction(prediction):
     int_to_label = {0: 'male', 1: 'female'}
@@ -13,9 +13,9 @@ def process_prediction(prediction):
 
 def digest_features(features):
     start = time.time()
-    gender, confidence = process_prediction(model.predict(features.reshape(1, -1)))
+    gender, confidence = process_prediction(gender_classifier.predict(features.reshape(1, -1)))
     end = time.time()
-    logger.info("Feature digestion and prediction time: {}".format(end-start))
+    logger.info("Feature digestion and gender prediction time: {}".format(end-start))
 
     return gender, confidence
 
@@ -25,14 +25,14 @@ def digest_audio_prediction(prediction, show_all):
     less_probable_text = []
 
     if len(prediction) == 0:
-        return "Unintelligible text", [], 0
+        return BAD_RESPONSE
 
     if not show_all:
         return text.append(prediction)
     prediction = prediction['alternative']
     text.append(prediction[0]['transcript'])
     confidence.append(prediction[0]['confidence'])
-    for i in range(1,len(prediction)):
+    for i in range(1,min(len(prediction), 2)):
         less_probable_text.append(prediction[i]['transcript'])
         if 'confidence' in prediction[i]:
             confidence.append(prediction[i]['confidence'])
@@ -53,11 +53,11 @@ def speech_to_text(wav, show_all=True):
 
         except sr.UnknownValueError:
             logger.info("Google Speech Recognition could not understand audio")
-            return "Unintelligible text", [], 0
+            return BAD_RESPONSE
 
         except sr.RequestError as e:
             logger.info("Could not request results from Google Speech Recognition service; {}".format(e))
-            return "Unintelligible text", [], 0
+            return BAD_RESPONSE
 
     return digest_audio_prediction(prediction, show_all)
 
