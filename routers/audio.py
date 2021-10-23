@@ -1,4 +1,6 @@
-from fastapi import APIRouter, UploadFile, File, Request
+from typing import Optional
+from fastapi import APIRouter, UploadFile, File
+from fastapi.param_functions import Query
 import os
 from utils.preprocess import Feature_Extractor
 from utils.utils import digest_features, speech_to_text, text_sentiment
@@ -10,7 +12,8 @@ router = APIRouter()
 
 
 @router.post("/upload/")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(file: UploadFile = File(..., description="Audio wav file to analyse"),
+                        tasks: Optional[str] = Query("gender, text, sentiment", description="List of tasks to perform")):
 
     response = {'success': False}
     
@@ -20,15 +23,18 @@ async def upload_file(file: UploadFile = File(...)):
     with open(file.filename, "wb") as f:
         f.write(file.file.read())
     
-    gender_features = Feature_Extractor(file.filename, mel=True).extract()
-    gender, confidence = digest_features(gender_features)
-    response['audio analysis'] = {'gender': gender, 'confidence': confidence}
+    if "gender" in tasks:
+        gender_features = Feature_Extractor(file.filename, mel=True).extract()
+        gender, confidence = digest_features(gender_features)
+        response['audio analysis'] = {'gender': gender, 'confidence': confidence}
 
-    text, less_probable_text, text_confidence = speech_to_text(file.filename, show_all=SHOW_ALL)
-    response['text analysis'] = {'transcript': text, 'confidence': text_confidence, 'less_probable_transcripts': less_probable_text}
+    if "text" in tasks:
+        text, less_probable_text, text_confidence = speech_to_text(file.filename, show_all=SHOW_ALL)
+        response['text analysis'] = {'transcript': text, 'confidence': text_confidence, 'less_probable_transcripts': less_probable_text}
 
-    sentiment = text_sentiment(text)
-    response['text analysis'].update({'sentiment': sentiment})
+    if "sentiment" in tasks:
+        sentiment = text_sentiment(text)
+        response['text analysis'].update({'sentiment': sentiment})
 
     response['success'] = True
 
