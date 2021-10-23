@@ -59,6 +59,6 @@ uvicorn app:app
 
 - Customize API request
 
-- Add audio sentiment analysis
-
 - Improve temporary file storage (mySql?)
+
+- Dockerize
