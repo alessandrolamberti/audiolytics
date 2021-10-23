@@ -1,3 +1,5 @@
+![](assets/waveform.jpg)
+
 # Voice analysis endpoint
 
 FastAPI based endpoint which loads a .wav file as input and returns a response.
