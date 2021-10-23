@@ -3,6 +3,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.responses import HTMLResponse
 import uvicorn
 from routers import audio
+from config.get_cfg import logger
 
 
 app = FastAPI()
