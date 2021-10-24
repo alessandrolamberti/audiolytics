@@ -27,7 +27,10 @@ FastAPI based endpoint which loads a .wav file as input and returns a response.
       "score": 0.9987033605575562
     }
   }
-}```
+}
+```
+
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
