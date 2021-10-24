@@ -53,10 +53,3 @@ Open API endpoint
 ```bash
 uvicorn app:app
 ```
-
-  
-## Roadmap
-
-- Improve temporary file storage (mySql?)
-
-- Dockerize
