@@ -5,8 +5,7 @@ from tensorflow.keras.layers import Dense, LSTM, Dropout
 
 
 logging.basicConfig(level=logging.INFO)
-
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("config")
 
 # Model
 GENDER_MODEL_PATH = os.getenv('GENDER_MODEL_PATH', "./weights/model.h5")
