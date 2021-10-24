@@ -16,6 +16,7 @@ async def upload_file(file: UploadFile = File(..., description="Audio wav file t
                         tasks: Optional[str] = Query("gender, text, sentiment", description="List of tasks to perform")):
 
     response = {'success': False}
+    text = None
     
     if not file.filename.endswith(".wav"):
         return {"error": "File is not a wav file"}
@@ -33,8 +34,10 @@ async def upload_file(file: UploadFile = File(..., description="Audio wav file t
         response['text analysis'] = {'transcript': text, 'confidence': text_confidence, 'less_probable_transcripts': less_probable_text}
 
     if "sentiment" in tasks:
+        if text is None:
+            text = speech_to_text(file.filename, show_all=SHOW_ALL)[0]
         sentiment = text_sentiment(text)
-        response['text analysis'].update({'sentiment': sentiment})
+        response['sentiment analysis'] = {'sentiment': sentiment}
 
     response['success'] = True
 
