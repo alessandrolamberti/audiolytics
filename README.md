@@ -36,20 +36,6 @@ FastAPI based endpoint which loads a .wav file as input and returns a response.
 [MIT](https://choosealicense.com/licenses/mit/)
 
   
-## Installation
+## Current overview of the project (Likely to change)
 
-Install instructions
-```bash
-  git clone https://github.com/alessandrolamberti/voice_analysis
-  cd voice_analysis
-  pip install -r requirements.txt
-```
-
-
-    
-## Run Locally
-
-Open API endpoint
-```bash
-uvicorn app:app
-```
+![](assets/overview.png)
