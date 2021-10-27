@@ -3,7 +3,7 @@ from fastapi import APIRouter, UploadFile, File
 from fastapi.param_functions import Query
 import os
 from utils.preprocess import Feature_Extractor
-from utils.utils import digest_features, speech_to_text, text_sentiment
+from utils.audio import digest_features, speech_to_text, text_sentiment
 
 from config.get_cfg import gender_classifier, SHOW_ALL, logger
 
