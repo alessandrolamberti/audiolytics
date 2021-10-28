@@ -1,19 +1,19 @@
 from typing import Optional
 from fastapi import APIRouter, UploadFile, File
 from fastapi.param_functions import Query
-import os
-from utils.preprocess import Feature_Extractor
-from utils.audio import digest_features, speech_to_text, text_sentiment
-
+from starlette.responses import Response, FileResponse
 from config.get_cfg import gender_classifier, SHOW_ALL, logger
-
+from PIL import Image
+from utils import *
+import os
+import io
 
 router = APIRouter()
 
 
-@router.post("/upload/")
+@router.post("/analytics/")
 async def upload_file(file: UploadFile = File(..., description="Audio wav file to analyse"),
-                        tasks: Optional[str] = Query("gender, text, sentiment", description="List of tasks to perform")):
+                      tasks: Optional[str] = Query("gender, text, sentiment", description="List of tasks to perform")):
 
     response = {'success': False}
     text = None
@@ -38,10 +38,33 @@ async def upload_file(file: UploadFile = File(..., description="Audio wav file t
             text = speech_to_text(file.filename, show_all=SHOW_ALL)[0]
         sentiment = text_sentiment(text)
         response['sentiment analysis'] = {'sentiment': sentiment}
-
+    
     response['success'] = True
 
     os.remove(file.filename)
     logger.info(f"File {file.filename} removed")
 
     return response
+
+
+@router.post("/spectrogram/")
+async def spectrogram(file: UploadFile = File(..., description="Audio wav file to analyse")):
+    
+    if not file.filename.endswith(".wav"):
+        return {"error": "File is not a wav file"}
+
+    with open(file.filename, "wb") as f:
+        f.write(file.file.read())
+
+
+    create_spectrogram(file.filename)
+    image = Image.open("spec.png")
+    image_bytes = io.BytesIO()
+    image.save(image_bytes, format='PNG')
+
+    os.remove(file.filename)
+    os.remove("spec.png")
+    
+
+    return Response(content=image_bytes.getvalue(), media_type='image/png')
+

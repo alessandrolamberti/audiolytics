@@ -1,6 +1,8 @@
 import speech_recognition as sr
 import numpy as np
 import time
+import matplotlib.pyplot as plt
+import wave
 from config.get_cfg import logger, gender_classifier, BAD_RESPONSE
 from transformers import pipeline
 
@@ -70,4 +72,31 @@ def speech_to_text(wav, show_all=True):
             return BAD_RESPONSE
 
     return digest_audio_prediction(prediction, show_all)
+
+def create_spectrogram(wav):
+    signal_wave = wave.open(f"./{wav}", 'r')
+
+    sample_rate = 16000
+    sig = np.frombuffer(signal_wave.readframes(sample_rate), dtype=np.int16)
+    sig = sig[:]
+
+    plt.figure(1)
+
+    plot_a = plt.subplot(211)
+    plot_a.plot(sig)
+    plot_a.set_xlabel('sample rate * time')
+    plot_a.set_ylabel('energy')
+
+    plot_b = plt.subplot(212)
+    plot_b.specgram(sig, NFFT=1024, Fs=sample_rate, noverlap=900)
+    plot_b.set_xlabel('Time')
+    plot_b.set_ylabel('Frequency')
+
+    plt.savefig("./spec.png")
+    plt.close()
+
+
+
+
+    
     
