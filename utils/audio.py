@@ -78,6 +78,7 @@ def speech_to_text(wav, show_all=True):
     return digest_audio_prediction(prediction, show_all)
 
 def create_spectrogram(data, rate):
+    start = time.time()
     plt.figure(1)
 
     plot_a = plt.subplot(211)
@@ -94,6 +95,8 @@ def create_spectrogram(data, rate):
     plt.savefig(buffer, format='png')
     buffer.seek(0)
     plt.close()
+    end = time.time()
+    logger.info("Spectrogram creation time: {}".format(end-start))
 
     return buffer
 
