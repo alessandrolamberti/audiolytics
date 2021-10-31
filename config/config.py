@@ -1,14 +1,17 @@
 import os
 import logging
+from dotenv import load_dotenv
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
 
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("config")
+load_dotenv()
 
 # Model
-GENDER_MODEL_PATH = os.getenv('GENDER_MODEL_PATH', "./weights/model.h5")
+GENDER_MODEL_PATH = os.getenv('GENDER_MODEL_PATH')
+
 
 def create_model(vector_length=128):
     model = Sequential()

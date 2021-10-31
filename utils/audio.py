@@ -2,7 +2,7 @@ import speech_recognition as sr
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-from config.get_cfg import logger, gender_classifier, BAD_RESPONSE
+from config import logger, gender_classifier, BAD_RESPONSE
 from transformers import pipeline
 from io import BytesIO
 

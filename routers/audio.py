@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import APIRouter, UploadFile, File
 from fastapi.param_functions import Query
 from starlette.responses import Response, FileResponse
-from config.get_cfg import gender_classifier, SHOW_ALL, logger
+from config import gender_classifier, SHOW_ALL, logger
 from utils import *
 import soundfile as sf
 from io import BytesIO

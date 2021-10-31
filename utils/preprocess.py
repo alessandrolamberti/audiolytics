@@ -1,7 +1,7 @@
 import librosa 
 import numpy as np
 import time
-from config.get_cfg import logger
+from config import logger
 
 class Feature_Extractor():
     """
