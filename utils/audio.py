@@ -2,9 +2,9 @@ import speech_recognition as sr
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-import wave
 from config.get_cfg import logger, gender_classifier, BAD_RESPONSE
 from transformers import pipeline
+from io import BytesIO
 
 def process_prediction(prediction):
     int_to_label = {0: 'male', 1: 'female'}
@@ -14,11 +14,11 @@ def process_prediction(prediction):
     confidence = float(max(prob_array))
     return gender, confidence
 
-def digest_features(features):
+def gender_prediction(features):
     start = time.time()
-    gender, confidence = process_prediction(gender_classifier.predict(features.reshape(1, -1)))
+    gender, confidence = process_prediction(gender_classifier.predict(features))
     end = time.time()
-    logger.info("Feature digestion and gender prediction time: {}".format(end-start))
+    logger.info("Gender prediction time: {}".format(end-start))
 
     return gender, confidence
 
@@ -42,9 +42,13 @@ def digest_audio_prediction(prediction, show_all):
 
     if not show_all:
         return text.append(prediction)
+
     prediction = prediction['alternative']
     text.append(prediction[0]['transcript'])
-    confidence.append(prediction[0]['confidence'])
+
+    if 'confidence' in prediction[0].keys():
+        confidence.append(prediction[0]['confidence'])
+
     for i in range(1,min(len(prediction), 2)):
         less_probable_text.append(prediction[i]['transcript'])
         if 'confidence' in prediction[i]:
@@ -73,27 +77,25 @@ def speech_to_text(wav, show_all=True):
 
     return digest_audio_prediction(prediction, show_all)
 
-def create_spectrogram(wav):
-    signal_wave = wave.open(f"./{wav}", 'r')
-
-    sample_rate = 16000
-    sig = np.frombuffer(signal_wave.readframes(sample_rate), dtype=np.int16)
-    sig = sig[:]
-
+def create_spectrogram(data, rate):
     plt.figure(1)
 
     plot_a = plt.subplot(211)
-    plot_a.plot(sig)
+    plot_a.plot(data)
     plot_a.set_xlabel('sample rate * time')
-    plot_a.set_ylabel('energy')
+    plot_a.set_ylabel('Energy')
 
     plot_b = plt.subplot(212)
-    plot_b.specgram(sig, NFFT=1024, Fs=sample_rate, noverlap=900)
+    plot_b.specgram(data, NFFT=1024, Fs=rate, noverlap=900)
     plot_b.set_xlabel('Time')
     plot_b.set_ylabel('Frequency')
 
-    plt.savefig("./spec.png")
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
     plt.close()
+
+    return buffer
 
 
 

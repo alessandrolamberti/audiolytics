@@ -1,5 +1,7 @@
 import librosa 
 import numpy as np
+import time
+from config.get_cfg import logger
 
 class Feature_Extractor():
     """
@@ -12,8 +14,9 @@ class Feature_Extractor():
      - Tonnetz: tonnetz
     """
 
-    def __init__(self, file_name, **kwargs):
-        self.file_name = file_name 
+    def __init__(self, data, rate, **kwargs):
+        self.data = data
+        self.rate = rate
         self.mfcc = kwargs.get('mfcc')
         self.chroma = kwargs.get('chroma')
         self.mel = kwargs.get('mel')
@@ -21,7 +24,7 @@ class Feature_Extractor():
         self.tonnetz = kwargs.get('tonnetz')
     
     def extract(self):
-        X, sample_rate = librosa.core.load(self.file_name)
+        X, sample_rate = self.data, self.rate
         if self.chroma or self.contrast:
             stft = np.abs(librosa.stft(X))
         result = np.array([])
@@ -41,3 +44,12 @@ class Feature_Extractor():
             tonnetz = np.mean(librosa.feature.tonnetz(y=librosa.effects.harmonic(X), sr=sample_rate).T, axis=0)
             result = np.hstack((result, tonnetz))
         return result
+
+
+def extract_features(data, rate, mel=True):
+    start = time.time()
+    features = Feature_Extractor(data, rate, mel=mel).extract().reshape(1, -1)
+    end = time.time()
+    logger.info("Extracting features took {} seconds".format(end-start))
+    return features
+    
