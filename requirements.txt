@@ -1,0 +1,13 @@
+librosa==0.8.1
+tqdm==4.60.0
+SoundFile==0.10.3.post1
+tensorflow==2.6.0
+matplotlib==3.4.1
+pandas==1.2.4
+starlette==0.16.0
+uvicorn==0.15.0
+transformers==4.6.1
+SpeechRecognition==3.8.1
+numpy==1.19.5
+fastapi==0.70.0
+python-dotenv==0.19.2
