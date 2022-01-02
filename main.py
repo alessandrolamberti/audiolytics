@@ -4,6 +4,7 @@ from starlette.responses import HTMLResponse
 import uvicorn
 from routers import audio
 from config import logger
+import os
 
 
 app = FastAPI()
@@ -24,4 +25,5 @@ async def shutdown_event():
     
 
 if __name__ == "__main__":
-    uvicorn.run(app)
+    port = int(os.environ.get("PORT", 5000))
+    uvicorn.run(app, host="0.0.0.0", port = port)

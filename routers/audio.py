@@ -1,8 +1,9 @@
 from typing import Optional
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, File, HTTPException
 from fastapi.param_functions import Query
 from starlette.responses import Response, FileResponse
-from config import gender_classifier, SHOW_ALL, logger
+from starlette.requests import Request
+from config import gender_classifier, SHOW_ALL, logger, ALLOWED_FILE_EXTENSIONS, DO_SENTIMENT_ANALYSIS
 from utils import *
 import soundfile as sf
 from io import BytesIO
@@ -11,11 +12,18 @@ router = APIRouter()
 
 
 @router.post("/analytics/")
-async def upload_file(file: bytes = File(..., description="Audio wav file to analyse"),
+async def upload_file(request: Request, file: bytes = File(..., description="Audio wav file to analyse"),
                       tasks: Optional[str] = Query("gender, text, sentiment", description="List of tasks to perform")):
-
+    
     response = {'success': False}
     text = None
+
+    content_type = request._form['file'].content_type
+    if content_type not in ALLOWED_FILE_EXTENSIONS:
+        response["message"] = "File must be one of {}".format(", ".join(ALLOWED_FILE_EXTENSIONS))
+        raise HTTPException(
+            status_code=400, detail=response)
+
     file_like = BytesIO(file)
     data, rate = sf.read(BytesIO(file))
     
@@ -28,7 +36,7 @@ async def upload_file(file: bytes = File(..., description="Audio wav file to ana
         text, less_probable_text, text_confidence = speech_to_text(file_like, show_all=SHOW_ALL)
         response['text analysis'] = {'transcript': text, 'confidence': text_confidence, 'less_probable_transcripts': less_probable_text}
 
-    if "sentiment" in tasks:
+    if "sentiment" in tasks and DO_SENTIMENT_ANALYSIS:
         if text is None:
             text = speech_to_text(file_like, show_all=SHOW_ALL)[0]
         sentiment = text_sentiment(text)
