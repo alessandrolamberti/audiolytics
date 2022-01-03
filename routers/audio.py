@@ -48,9 +48,19 @@ async def upload_file(request: Request, file: bytes = File(..., description="Aud
 
 
 @router.post("/spectrogram/")
-async def spectrogram(file: bytes = File(..., description="Audio wav file to analyse")):
+async def spectrogram(request: Request, file: bytes = File(..., description="Audio wav file to analyse")):
+    
+    content_type = request._form['file'].content_type
+    if content_type not in ALLOWED_FILE_EXTENSIONS:
+        response["message"] = "File must be one of {}".format(", ".join(ALLOWED_FILE_EXTENSIONS))
+        raise HTTPException(
+            status_code=400, detail=response)
+
     
     data, rate = sf.read(BytesIO(file))
+    if len(data.shape) > 1:
+        data = data[:, 0]
+
     spectrogram = create_spectrogram(data, rate)
 
     return Response(content=spectrogram.getvalue(), media_type='image/png')
