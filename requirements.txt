@@ -5,7 +5,7 @@ pandas==1.2.4
 starlette==0.16.0
 numpy==1.19.5
 transformers==4.6.1
-tensorflow-cpu==2.6.2
+tensorflow-cpu==2.6.3
 uvicorn==0.15.0
 librosa==0.8.1
 SoundFile==0.10.3.post1
