@@ -3,7 +3,7 @@ tqdm==4.60.0
 matplotlib==3.4.1
 pandas==1.2.4
 starlette==0.16.0
-numpy==1.19.5
+numpy==1.21
 transformers==4.6.1
 tensorflow-cpu==2.6.3
 uvicorn==0.15.0
